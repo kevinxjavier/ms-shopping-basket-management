@@ -1,0 +1,624 @@
+openapi: 3.0.3
+info:
+  title: ShoppingBasket_Management
+  description: |-
+    The main target of this API is to query and manage the associated Shopping Basket.
+  version: 1.0.0
+  contact:
+    email: kevin@kevinpina.com
+    name: Kevin Piña
+servers:
+  - url: 'https://{host}/api/v1/shoppping_basket_management'
+    variables:
+      host:
+        description: The environment where the API is hosted.
+        enum:
+          # DEV
+          - dev.api.kevinpina.com
+          # PRE
+          - pre.api.kevinpina.com
+          # PRO
+          - api.kevinpina.com
+        default: dev.api.kevinpina.com
+tags:
+  - name: Shopping_Basket_Management
+    description: Operations about Shopping Basket Management
+  - name: Health
+    description: Health status
+security:
+  - JWTProfile: []
+  - JWT: []
+paths:
+  /items:
+    post:
+      operationId: getItems
+      summary: Retrieve a list of items and calculate their IVA
+      description: |-
+        Gets a list of items endpoint
+      tags:
+        - Shopping
+      parameters:
+        - $ref: '#/components/parameters/header-X-Authorization'
+      requestBody:
+        $ref: '#/components/requestBodies/Items'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetProductResumeResponse'
+        '204':
+          $ref: '#/components/responses/response204'
+        '400':
+          $ref: '#/components/responses/error400'
+        '401':
+          $ref: '#/components/responses/error401'
+        '403':
+          $ref: '#/components/responses/error403'
+        '404':
+          $ref: '#/components/responses/error404'
+        '406':
+          $ref: '#/components/responses/error406'
+        '413':
+          $ref: '#/components/responses/error413'
+        '414':
+          $ref: '#/components/responses/error414'
+        '422':
+          $ref: '#/components/responses/error422'
+        '429':
+          $ref: '#/components/responses/error429'
+        '500':
+          $ref: '#/components/responses/error500'
+        '503':
+          $ref: '#/components/responses/error503'
+        '504':
+          $ref: '#/components/responses/error504'
+        default:
+          $ref: '#/components/responses/errorDefault'
+      security:
+        - JWTProfile:
+            - shopping_basket.management.read
+        - JWT: []
+  /csv/upload:
+    post:
+      operationId: loadItems
+      summary: Retrieve a list of items and calculate their IVA from a *.csv file
+      description: |-
+        Gets a list of items from a *.csv file endpoint
+      tags:
+        - Shopping
+      parameters:
+        - $ref: '#/components/parameters/header-X-Authorization'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          $ref: '#/components/responses/GetProductResumeResponse'
+        '204':
+          $ref: '#/components/responses/response204'
+        '400':
+          $ref: '#/components/responses/error400'
+        '401':
+          $ref: '#/components/responses/error401'
+        '403':
+          $ref: '#/components/responses/error403'
+        '404':
+          $ref: '#/components/responses/error404'
+        '406':
+          $ref: '#/components/responses/error406'
+        '413':
+          $ref: '#/components/responses/error413'
+        '414':
+          $ref: '#/components/responses/error414'
+        '422':
+          $ref: '#/components/responses/error422'
+        '429':
+          $ref: '#/components/responses/error429'
+        '500':
+          $ref: '#/components/responses/error500'
+        '503':
+          $ref: '#/components/responses/error503'
+        '504':
+          $ref: '#/components/responses/error504'
+        default:
+          $ref: '#/components/responses/errorDefault'
+      security:
+        - JWTProfile:
+            - shopping_basket.management.read
+        - JWT: [ ]
+  /health:
+    get:
+      operationId: getHealth
+      summary: Health
+      description: OK or NOK
+      tags:
+        - Health
+      parameters:
+        - $ref: '#/components/parameters/header-X-Authorization'
+      responses:
+        '200':
+          $ref: '#/components/responses/HealthResponse'
+        '204':
+          $ref: '#/components/responses/response204'
+        '400':
+          $ref: '#/components/responses/error400'
+        '401':
+          $ref: '#/components/responses/error401'
+        '403':
+          $ref: '#/components/responses/error403'
+        '404':
+          $ref: '#/components/responses/error404'
+        '406':
+          $ref: '#/components/responses/error406'
+        '413':
+          $ref: '#/components/responses/error413'
+        '414':
+          $ref: '#/components/responses/error414'
+        '422':
+          $ref: '#/components/responses/error422'
+        '429':
+          $ref: '#/components/responses/error429'
+        '500':
+          $ref: '#/components/responses/error500'
+        '503':
+          $ref: '#/components/responses/error503'
+        '504':
+          $ref: '#/components/responses/error504'
+        default:
+          $ref: '#/components/responses/errorDefault'
+      security:
+        - JWTProfile:
+            - get.health
+        - JWT: []
+components:
+  parameters:
+    header-X-Authorization:
+      name: Authorization
+      required: true
+      in: header
+      description: Token header
+      example: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrcGluYTVAZ21haWwuY29tIiwiaWF0IjoxNzI4OTM1NDYxLCJleHAiOjE3Mjg5MzU3NjF9.p4Mp3azV2lhoiSf0k1u7q8fz-BPvNDTIvPM8PNBx-bc
+      schema:
+        type: string
+        maxLength: 200
+        minLength: 1
+  schemas:
+    Error:
+      type: object
+      description: Data structure containing the error details
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          description: Unique alphanumeric human readable error code
+          example: XXX
+          pattern: '^[a-zA-Z_0-9 ]*$'
+          maxLength: 25
+          minLength: 1
+        message:
+          type: string
+          description: Brief summary of the reported issue
+          example: Message
+          pattern: '^[a-zA-Z0-9. /_-]*$'
+          maxLength: 255
+          minLength: 1
+        level:
+          type: string
+          description: |-
+            Level of the reported issue.
+            The possible values are.
+            - ERROR
+            - FATAL
+            - INFO
+            - WARNING
+          enum:
+            - ERROR
+            - FATAL
+            - INFO
+            - WARNING
+          example: ERROR
+        description:
+          type: string
+          description: Detailed description of the reported issue
+          example: Description
+          pattern: '^[a-zA-Z0-9. /_-]*$'
+          maxLength: 255
+          minLength: 1
+      required:
+        - code
+        - message
+        - level
+        - description
+    Errors:
+      type: object
+      description: Data structure containing the details for errors
+      properties:
+        errors:
+          type: array
+          description: Array of errors
+          items:
+            $ref: '#/components/schemas/Error'
+          maxItems: 50
+          minItems: 0
+      required:
+        - errors
+      additionalProperties: false
+    ProductResume:
+      type: object
+      description: Response of The list of Items and total of them with IVA
+      required:
+        - items
+        - totalProducts
+        - totalValueProducts
+      properties:
+        items:
+          $ref: '#/components/schemas/GetItems'
+        totalProducts:
+          $ref: '#/components/schemas/TotalProducts'
+        totalValueProducts:
+          $ref: '#/components/schemas/TotalValueProducts'
+    TotalProducts:
+      type: integer
+      format: int32
+      description: The total number of items
+      example: 3
+    TotalValueProducts:
+      type: number
+      format: double
+      example: 33.67
+    ItemObject:
+      type: object
+      description: Object container of array of items products
+      required:
+        - items
+      properties:
+        items:
+          $ref: '#/components/schemas/GetItems'
+    GetItems:
+      type: array
+      description: The List of Items
+      minItems: 1
+      maxItems: 999
+      items:
+        $ref: '#/components/schemas/Item'
+    Item:
+      type: object
+      description: items
+      required:
+        - id
+        - name
+        - value
+      properties:
+        id:
+          type: integer
+          description: Id of the item
+          format: int64
+          example: 1
+        name:
+          type: string
+          description: Name of the product
+          example: Eggs
+        value:
+          type: number
+          format: double
+          example: 1.50
+        tax:
+          type: number
+          format: float
+          enum: [21, 10, 10, 10, 10, 10, 10, 5, 4, 0]
+          x-enum-varnames:
+            - GENERAL
+            - FOOD
+            - HEALTH
+            - TRANSPORT
+            - HOSPITALITY
+            - ENTERTAINMENT
+            - CONSTRUCTION
+            - ESSENTIAL_SERVICES
+            - FIRST_NECESSITY
+            - BASIC_BASKET
+          description: |-
+            The type of taxes to apply a product.
+            The possible values are.
+            - GENERAL
+            - FOOD
+            - HEALTH
+            - TRANSPORT
+            - HOSPITALITY
+            - ENTERTAINMENT
+            - CONSTRUCTION
+            - ESSENTIAL_SERVICES
+            - FIRST_NECESSITY
+            - BASIC_BASKET
+          example: GENERAL
+  requestBodies:
+    Items:
+      description: Object that contains an array of items Products
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ItemObject'
+          examples:
+            GetItemsResponseExample:
+              $ref: '#/components/examples/GetProductResumeResponseExample'
+  responses:
+    error400:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err400Example:
+              $ref: '#/components/examples/err400Example'
+    error401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err401Example:
+              $ref: '#/components/examples/err401Example'
+    error403:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err403Example:
+              $ref: '#/components/examples/err403Example'
+    error404:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err404Example:
+              $ref: '#/components/examples/err404Example'
+    error406:
+      description: Not Acceptable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err406Example:
+              $ref: '#/components/examples/err406Example'
+    error413:
+      description: Payload Too Large
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err413Example:
+              $ref: '#/components/examples/err413Example'
+    error414:
+      description: URI Too Long
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err414Example:
+              $ref: '#/components/examples/err414Example'
+    error422:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err422Example:
+              $ref: '#/components/examples/err422Example'
+    error429:
+      description: Too Many Requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err429Example:
+              $ref: '#/components/examples/err429Example'
+    error500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err500Example:
+              $ref: '#/components/examples/err500Example'
+    error503:
+      description: Service unavailable
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err503Example:
+              $ref: '#/components/examples/err503Example'
+    error504:
+      description: Gateway timeout
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            err504Example:
+              $ref: '#/components/examples/err504Example'
+    errorDefault:
+      description: Default error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+          examples:
+            errDefaultExample:
+              $ref: '#/components/examples/errDefaultExample'
+    HealthResponse:
+      description: The health response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: The status
+                example: OK
+                maxLength: 2
+                minLength: 0
+                pattern: '^[a-zA-Z0-9 ]*$'
+            additionalProperties: false
+          examples:
+            HealthResponseExample:
+              $ref: '#/components/examples/healthResponseExample'
+    GetProductResumeResponse:
+      description: Product items resume response
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProductResume"
+          examples:
+            GetProductResumeResponseExample:
+              $ref: '#/components/examples/GetProductResumeResponseExample'
+    response204:
+      description: No Content
+  examples:
+    err400Example:
+      value:
+        errors:
+          - code: BAD_REQUEST
+            level: ERROR
+            message: Bad Request
+            description: Error validating schema
+    err401Example:
+      value:
+        errors:
+          - code: UNAUTHORIZED
+            message: Unauthorized
+            level: ERROR
+            description: Unauthorized description
+    err403Example:
+      value:
+        errors:
+          - code: FORBIDDEN
+            level: ERROR
+            message: Forbidden
+            description: Forbidden description
+          - code: FORBIDDEN
+            level: ERROR
+            message: Forbidden
+            description: Forbidden description
+    err404Example:
+      value:
+        errors:
+          - code: NOT_FOUND
+            level: ERROR
+            message: Not Found
+            description: Not Found description
+    err406Example:
+      value:
+        errors:
+          - code: NOT_ACCEPTABLE
+            level: ERROR
+            message: Not Acceptable
+            description: Not Acceptable description
+    err413Example:
+      value:
+        errors:
+          - code: PAYLOAD_TOO_LARGE
+            level: ERROR
+            message: Payload Too Large
+            description: Payload Too Large description
+    err414Example:
+      value:
+        errors:
+          - code: URI_TOO_LONG
+            level: ERROR
+            message: URI Too Long
+            description: URI Too Long description
+    err422Example:
+      value:
+        errors:
+          - code: UNPROCESABLE_ENTITY
+            level: ERROR
+            message: Unprocessable Entity
+            description: Unprocessable Entity description
+    err429Example:
+      value:
+        errors:
+          - code: TOO_MANY_REQUEST
+            level: ERROR
+            message: Too Many Requests
+            description: Too Many Requests description
+    err500Example:
+      value:
+        errors:
+          - code: INTERNAL_SERVER_ERROR
+            level: ERROR
+            message: Internal server error
+            description: Internal server error description
+    err503Example:
+      value:
+        errors:
+          - code: SERVICE_UNAVAILABLE
+            level: ERROR
+            message: Service unavailable
+            description: Service unavailable description
+    err504Example:
+      value:
+        errors:
+          - code: GATEWAY_TIMEOUT
+            level: ERROR
+            message: Gateway timeout
+            description: Gateway timeout description
+    healthResponseExample:
+      value:
+        status: OK
+    GetProductResumeResponseExample:
+      value:
+        items:
+          - - id: 1
+              name: Eggs
+              value: 1.5
+              tax: 4
+            - id: 2
+              name: TV
+              value: 130.99
+              tax: 21
+          - totalProducts: 2
+          - totalValueProducts: 132.49
+    errDefaultExample:
+      value:
+        errors:
+          - code: INTERNAL_SERVER_ERROR
+            level: FATAL
+            message: Error message
+            description: Error description
+  securitySchemes:
+    JWTProfile:
+      type: oauth2
+      description: 'OAuth Grant type, JWT Profile'
+      flows:
+        implicit:
+          authorizationUrl: 'http://$(authorization-url)'
+          scopes:
+            user.management.read: Read operations
+            get.health: Health operations
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT authentication security
