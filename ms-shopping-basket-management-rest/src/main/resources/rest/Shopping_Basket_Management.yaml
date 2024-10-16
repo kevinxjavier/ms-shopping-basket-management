@@ -93,8 +93,6 @@ paths:
               type: object
               properties:
                 file:
-                  type: array
-                  items:
                     type: string
                     format: binary
       responses:

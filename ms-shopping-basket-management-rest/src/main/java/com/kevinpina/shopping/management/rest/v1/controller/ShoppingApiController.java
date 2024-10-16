@@ -1,5 +1,6 @@
 package com.kevinpina.shopping.management.rest.v1.controller;
 
+import com.kevinpina.shopping.management.domain.exception.FailParsingCSVFileException;
 import com.kevinpina.shopping.management.domain.utils.Constants;
 import com.kevinpina.shopping.management.rest.v1.client.api.ShoppingApi;
 import com.kevinpina.shopping.management.rest.v1.client.model.ItemDTO;
@@ -50,11 +51,11 @@ public class ShoppingApiController implements ShoppingApi {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ResponseEntity<ProductResumeDTO> loadItems(String authorization, List<MultipartFile> file) {
+	public ResponseEntity<ProductResumeDTO> loadItems(String authorization, MultipartFile file) {
 		if (file != null && !file.isEmpty()) {
-			String destinationFile = CSVHelper.saveFile(file.get(0), pathCsvLocal);
-			log.info("----- Uploaded the file successfully: {} to destination {}", file.get(0).getOriginalFilename(), destinationFile);
-			if (!Strings.isNullOrEmpty(destinationFile) && CSVHelper.hasCSVFormat(file.get(0))) {
+			String destinationFile = CSVHelper.saveFile(file, pathCsvLocal);
+			log.info("----- Uploaded the file successfully: {} to destination {}", file.getOriginalFilename(), destinationFile);
+			if (!Strings.isNullOrEmpty(destinationFile) && CSVHelper.hasCSVFormat(file)) {
 				try {
 					return ResponseEntity.status(HttpStatus.OK).body(getProductResume(CSVHelper.csvToItems(destinationFile)));
 				} catch (Exception e) {
@@ -63,15 +64,15 @@ public class ShoppingApiController implements ShoppingApi {
 						log.error("----- Renaming file as Not OK (nok_) in: {}/nok_{}", destinationFile.substring(0, destinationFile.lastIndexOf("/")),
 								destinationFile.substring(destinationFile.lastIndexOf("/") + 1));
 					} else {
-						log.error("----- Could not rename the file: {}!", file.get(0).getOriginalFilename());
+						log.error("----- Could not rename the file: {}!", file.getOriginalFilename());
 					}
-					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+					throw new FailParsingCSVFileException("Problems reading the csv file: " + e.getMessage());
 				}
 			}
 		}
 
 		log.info("----- Please upload a csv file!");
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		throw new FailParsingCSVFileException("Please upload a csv file!");
 	}
 
 	private ProductResumeDTO getProductResume(List<ItemDTO> items) {
