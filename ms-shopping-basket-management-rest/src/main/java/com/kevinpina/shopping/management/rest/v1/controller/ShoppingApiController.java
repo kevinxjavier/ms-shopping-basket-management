@@ -43,7 +43,6 @@ public class ShoppingApiController implements ShoppingApi {
 	 */
 	@Override
 	public ResponseEntity<ProductResumeDTO> getItems(String authorization, ItemObjectDTO itemObjectDTO) {
-		//Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		return ResponseEntity.status(HttpStatus.OK).body(getProductResume(itemObjectDTO.getItems()));
 	}
 
