@@ -6,6 +6,8 @@
 * Apache Maven 3.8.6
 * Java 18.0.2.1
 * PostgreSQL 13.14
+* Docker 24.0.7
+* Docker Compose version 2.24.6
 * Spring-boot 3.3.4
 * Tested on Debian GNU/Linux 9 (stretch)
 * Install [core-parent](https://github.com/kevinxjavier/core-parent.git)
@@ -44,7 +46,7 @@ Starting from the project's root folder, execute the following steps from a new 
 `mvn spring-boot:run -f ms-shopping-basket-management-boot/pom.xml`
 
 ###### 3.2) Run Docker
-These are the spteps to create and run microservice in a Docker.
+These are the spteps to create and run microservice in a Docker, starting from the project's root folder execute:
 ```
 $ sudo docker build -t kevinpina/shopping-basket . --no-cache=true    
 $ sudo docker run --name shopping -p 8080:8080 -d kevinpina/shopping-basket
@@ -58,6 +60,17 @@ $ sudo docker run --name shopping -p 8080:8080 -d kevinpina/shopping-basket
         properties: spring.datasource.url spring.datasource.username and spring.datasource.password
         i.e.: spring.datasource.url = "jdbc:postgresql://192.168.50.62:5432/shopping"
         instead of: spring.datasource.url = *database-url
+```
+
+###### 3.3) Run Docker Compose
+After created the docker kevinpina/shopping-basket:latest we can run multiple instances of the app dockerized, 
+Starting from the project's root folder execute: 
+```
+$ sudo docker compose build
+$ sudo docker compose up --scale app=3 -d
+
+# To watch the ports assign execute:
+# sudo docker compose ps
 ```
 
 ###### Swagger
