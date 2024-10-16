@@ -1,8 +1,13 @@
 package com.kevinpina.shopping.management.infrastructure.config;
 
-import com.kevinpina.shopping.management.domain.repository.user.FetchUserRepository;
-import com.kevinpina.shopping.management.infrastructure.repository.db.repository.UserRepository;
-import com.kevinpina.shopping.management.infrastructure.repository.user.FetchUserRepositoryImpl;
+import com.kevinpina.shopping.management.domain.filesystem.csv.CsvFilesystem;
+import com.kevinpina.shopping.management.domain.repository.item.FetchItemRepository;
+import com.kevinpina.shopping.management.domain.repository.item.SaveItemRepository;
+import com.kevinpina.shopping.management.infrastructure.filesystem.csv.CsvFilesystemImpl;
+import com.kevinpina.shopping.management.infrastructure.repository.db.repository.ItemRepository;
+import com.kevinpina.shopping.management.infrastructure.repository.item.FetchItemRepositoryImpl;
+import com.kevinpina.shopping.management.infrastructure.repository.item.SaveItemRepositoryImpl;
+import com.kevinpina.shopping.management.infrastructure.repository.mapper.impl.ItemMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,14 +18,36 @@ import org.springframework.context.annotation.Configuration;
 public class InfrastructureConfig {
 
     /**
-     * FetchUserRepository.
+     * FetchItemRepository.
      *
-     * @param userRepository userRepository
+     * @param itemRepository itemRepository
      * @return implementation
      */
     @Bean
-    public FetchUserRepository fetchUserRepository(final UserRepository userRepository) {
-        return new FetchUserRepositoryImpl(userRepository);
+    public FetchItemRepository fetchItemRepository(final ItemRepository itemRepository) {
+        return new FetchItemRepositoryImpl(itemRepository);
+    }
+
+    /**
+     * SaveItemRepository.
+     *
+     * @param itemRepository itemRepository
+     * @param itemMapper itemMapper
+     * @return implementation
+     */
+    @Bean
+    public SaveItemRepository saveItemRepository(final ItemRepository itemRepository, final ItemMapper itemMapper) {
+        return new SaveItemRepositoryImpl(itemRepository, itemMapper);
+    }
+
+    /**
+     * CsvFilesystem.
+     *
+     * @return implementation
+     */
+    @Bean
+    public CsvFilesystem csvFilesystem() {
+        return new CsvFilesystemImpl();
     }
 
 }

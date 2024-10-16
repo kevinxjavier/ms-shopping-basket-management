@@ -16,6 +16,10 @@
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Boot module</description>
 
+    <properties>
+        <slf4j.version>1.6.1</slf4j.version>
+    </properties>
+
     <dependencies>
         <!--Module dependencies-->
         <dependency>
@@ -45,6 +49,18 @@
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- Comment to silence logs -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <!-- JPA -->

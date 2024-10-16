@@ -5,16 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 /**
- * User class.
+ * CSV class.
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class User {
-    private String userId;
-    private String email;
-    private String firstName;
-    private String lastName;
+public class Item {
+
+    private UUID uuid;
+    private String userName;
+    private String items;
+
 }

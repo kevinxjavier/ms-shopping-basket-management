@@ -25,7 +25,7 @@ Start a Postgres instance:
 $ sudo docker run --name postgres -e POSTGRES_DB=shopping -p 5432:5432 -e POSTGRES_PASSWORD=123456789 -e POSTGRES_USER=administrator -d postgres:13-alpine
 ```
 
-##### Compile (If problems)
+##### Compile with (If problems)
 ```
 $ mvn clean compile package
 $ mvn clean compile package -U       # -U means force update of snapshot dependencies
